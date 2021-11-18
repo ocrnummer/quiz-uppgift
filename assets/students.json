@@ -1,14 +1,4 @@
-/*
-*			declarations
-*/
-
-const imgEl = document.querySelector('#img');
-
-/*
-*			Arrays
-*/
-
-const students = [
+[
 	{
 		"name" : "Adi Dzocaj",
 		"image": "assets/images/students/adi-dzocaj.jpg"
@@ -165,45 +155,4 @@ const students = [
 		"name" : "Wiktoria Dobrzewinska",
 		"image": "assets/images/students/wiktoria-dobrzewinska.jpg"
 	}
-];
-
-const missingStudents = [
-	{
-		"name": "Andjela Saponjic",
-		"image": null
-	},
-	{
-		"name": "Cazpian Levén",
-		"image": null
-	},
-	{
-		"name": "Frida Lam",
-		"image": null
-	},
-	{
-		"name": "Maxim Khnykin",
-		"image": null
-	},
-	{
-		"name": "Philip Le",
-		"image": null
-	}
-];
-
-
-/*
-*			Shuffle-function
-*/
-
-const randomized = (students) => {
-    return Math.ceil(Math.random() * students.length);
-}
-
-
-/*
-*			DOM
-*/
-
-imgEl.setAttribute("src", students[randomized(students)].image);
-
-
+]
