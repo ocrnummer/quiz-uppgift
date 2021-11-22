@@ -1,13 +1,6 @@
 /*
-*			declarations
+*			Studentarrays
 */
-
-const imgEl = document.querySelector('#img');
-
-/*
-*			Arrays
-*/
-
 const students = [
 	{
 		"name" : "Adi Dzocaj",
@@ -167,43 +160,84 @@ const students = [
 	}
 ];
 
-const missingStudents = [
-	{
-		"name": "Andjela Saponjic",
-		"image": null
-	},
-	{
-		"name": "Cazpian Levén",
-		"image": null
-	},
-	{
-		"name": "Frida Lam",
-		"image": null
-	},
-	{
-		"name": "Maxim Khnykin",
-		"image": null
-	},
-	{
-		"name": "Philip Le",
-		"image": null
-	}
-];
+// Array att spara använda bilder i
+let usedIndex = [];
 
 
 /*
-*			Shuffle-function
+*		Slumpfunktion
 */
-
-const randomized = (students) => {
-    return Math.ceil(Math.random() * students.length);
+const shuffleArray = (array) => {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+	return array;
 }
+
+shuffleArray(students);
+let randomCorrectStudent = students[0];
+
+
+/*
+*		Bild-generator
+*/
+const imgEl = document.querySelector('#img');
+
+let imageGenerator = () => imgEl.setAttribute( "src", randomCorrectStudent.image);
+
+imageGenerator();
 
 
 /*
 *			DOM
 */
 
-imgEl.setAttribute("src", students[randomized(students)].image);
+let guesses = 0;
+let correctGuesses = 0;
+
+const testFunc = (e) => {
+		guesses++;
+
+		if (e.target.innerText === randomCorrectStudent.name) {
+			correctGuesses++;
+
+			usedIndex.push(randomCorrectStudent);
+		}
 
 
+		shuffleArray(students);
+		randomCorrectStudent = students[0];
+		imageGenerator();
+
+		document.querySelector('.row').innerHTML = "";
+		renderButtons();
+}
+
+
+
+/*
+*		Knapp-generator
+*/
+let renderButtons = () => {
+
+	// Array med alternativen
+	const alternatives = [randomCorrectStudent, students[1], students[2], students[3]];
+
+	const randomAlternatives = shuffleArray(alternatives);
+
+	randomAlternatives.forEach(alternative => {
+		document.querySelector('.row').innerHTML += `
+			<button class="button col-sm m-sm-3 btn-primary btn-lg">${alternative.name}</button>
+		`
+	});
+
+	let clicks = document.querySelectorAll('.button')
+	clicks.forEach(click => {
+		click.addEventListener('click', testFunc)
+	});
+}
+
+renderButtons();
