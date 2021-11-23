@@ -1,6 +1,5 @@
-/*
-*			Studentarrays
-*/
+
+// Studentarrays
 const students = [
 	{
 		"name" : "Adi Dzocaj",
@@ -194,12 +193,12 @@ imageGenerator();
 /*
 *			DOM
 */
-
 let guesses = 0;
 let correctGuesses = 0;
 
-const testFunc = (e) => {
+const gameplayFunction = (e) => {
 		guesses++;
+
 
 		if (e.target.innerText === randomCorrectStudent.name) {
 			correctGuesses++;
@@ -207,14 +206,25 @@ const testFunc = (e) => {
 			usedIndex.push(randomCorrectStudent);
 		}
 
-
 		shuffleArray(students);
 		randomCorrectStudent = students[0];
+
+		usedIndex.forEach(student => {
+			if ( student.name === randomCorrectStudent.name ) {
+				shuffleArray(students);
+				randomCorrectStudent = students[0];
+
+				console.log("hsjdfk")
+			}
+		})
+		
+		
+
 		imageGenerator();
 
 		document.querySelector('.row').innerHTML = "";
 		renderButtons();
-}
+};
 
 
 
@@ -236,7 +246,7 @@ let renderButtons = () => {
 
 	let clicks = document.querySelectorAll('.button')
 	clicks.forEach(click => {
-		click.addEventListener('click', testFunc)
+		click.addEventListener('click', gameplayFunction)
 	});
 }
 
