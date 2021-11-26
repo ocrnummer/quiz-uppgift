@@ -1,7 +1,3 @@
-/*
-* 			ARRAYS
-*/
-
 const students = [
 	{
 		"name" : "Adi Dzocaj",
@@ -161,9 +157,6 @@ const students = [
 	}
 ];
 
-// 		Array för tidigare använda
-let usedIndex = [];
-
 /*
 *		DOM och declarations
 */
@@ -177,11 +170,6 @@ let guesses = 0;
 let correctGuesses = 0;
 let highscore = 0;
 
-
-/*
-*		FUNKTIONER
-*/
-
 //		Slumpfunktion
 const shuffleArray = (array) => {
     for (var i = array.length - 1; i > 0; i--) {
@@ -194,6 +182,7 @@ const shuffleArray = (array) => {
 };
 
 let randomStudents = students.map(student => shuffleArray(student));
+
 let correctStudent = randomStudents[0];
 
 //		Bild-generator
@@ -211,11 +200,11 @@ const renderButtons = () => {
 	randomAlternatives.forEach(alternative => {
 		if (alternative === correctStudent) {
 			buttonEl.innerHTML += `
-				<button id="correct" class="button col-5 btn-lg m-2 mw-100 btn-primary">${alternative.name}</button>
+				<button id="correct" class="button btn btn-warning text-dark col-sm-5">${alternative.name}</button>
 			`;
 		} else {
 			buttonEl.innerHTML += `
-				<button class="button col-5 btn-lg m-2 mw-100 btn-primary">${alternative.name}</button>
+				<button class="button btn btn-warning col-sm-5">${alternative.name}</button>
 			`;
 		}
 	});
@@ -229,7 +218,7 @@ const renderButtons = () => {
 //		Rendera start-knapp
 const renderStartGameButton = () => {
 	startAndScoreEl.innerHTML = `
-		<button id="start" class="button btn btn-warning">Starta spelet!</button>
+		<button id="start" class="button btn btn-warning text-dark col-sm-6">Starta spelet!</button>
 	`;
 
 	document.querySelector('#start').addEventListener('click', e => { 
@@ -277,7 +266,7 @@ const endGame = () => {
 		<h2>Slut på spelet!</h2> 
 		<p>Du hade ${correctGuesses} av ${guesses} rätt. </p>
 		<p>Ditt nuvarande rekord är ${highscore} rätt. </p>
-		<button id="restart" class="button btn btn-warning">Spela igen!</button>
+		<button id="restart" class="button btn btn-warning text-dark col-sm-6">Spela igen!</button>
 	`;
 
 	// const restartButton = document.querySelector('#restart');
@@ -285,7 +274,7 @@ const endGame = () => {
 		guesses = 0;
 		correctGuesses = 0;
 
-		randomStudents = shuffleArray(students);
+		randomStudents = students.map(student => shuffleArray(student));
 
 		startAndScoreEl.classList.add('d-none');
 		buttonEl.classList.remove('d-none');
@@ -305,28 +294,3 @@ const gameplayFunction = (e) => {
 };
 
 renderStartGameButton();
-
-
-
-
-
-
-
-
-
-
-
-/*	Anteckningar
-
-- Gör klart själva spelfunktionen.
-	() gör så reset-knappen funkar
-	() fixa räknaren för rätt svar och antal omgångar
-	() Välj hur långt spelet ska vara.
-	(x) En "slutskärm" med antal rätt/fel svar.
-	(x) En spela-igenknapp.
-
-
-
-- förhindra repetion av bilder.
-
-*/
