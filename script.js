@@ -1,5 +1,7 @@
+/*
+* 			ARRAYS
+*/
 
-// Studentarrays
 const students = [
 	{
 		"name" : "Adi Dzocaj",
@@ -159,13 +161,28 @@ const students = [
 	}
 ];
 
-// Array att spara använda bilder i
+// 		Array för tidigare använda
 let usedIndex = [];
+
+/*
+*		DOM och declarations
+*/
+
+const buttonEl = document.querySelector('#button-container');
+const imgEl = document.querySelector('#img');
+const startAndScoreEl = document.querySelector('#startAndScore');
+const cardEl = document.querySelector('.card');
+
+let guesses = 0;
+let correctGuesses = 0;
+let highscore = 0;
 
 
 /*
-*		Slumpfunktion
+*		FUNKTIONER
 */
+
+//		Slumpfunktion
 const shuffleArray = (array) => {
     for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -174,80 +191,142 @@ const shuffleArray = (array) => {
         array[j] = temp;
     }
 	return array;
-}
-
-shuffleArray(students);
-let randomCorrectStudent = students[0];
-
-
-/*
-*		Bild-generator
-*/
-const imgEl = document.querySelector('#img');
-
-let imageGenerator = () => imgEl.setAttribute( "src", randomCorrectStudent.image);
-
-imageGenerator();
-
-
-/*
-*			DOM
-*/
-let guesses = 0;
-let correctGuesses = 0;
-
-const gameplayFunction = (e) => {
-		guesses++;
-
-
-		if (e.target.innerText === randomCorrectStudent.name) {
-			correctGuesses++;
-
-			usedIndex.push(randomCorrectStudent);
-		}
-
-		shuffleArray(students);
-		randomCorrectStudent = students[0];
-
-		usedIndex.forEach(student => {
-			if ( student.name === randomCorrectStudent.name ) {
-				shuffleArray(students);
-				randomCorrectStudent = students[0];
-
-				console.log("hsjdfk")
-			}
-		})
-		
-		
-
-		imageGenerator();
-
-		document.querySelector('.row').innerHTML = "";
-		renderButtons();
 };
 
+let randomStudents = students.map(student => shuffleArray(student));
+let correctStudent = randomStudents[0];
 
+//		Bild-generator
+const imageGenerator = () => imgEl.setAttribute( "src", correctStudent.image);
 
-/*
-*		Knapp-generator
-*/
-let renderButtons = () => {
-
+//		Knapp-generator
+const renderButtons = () => {
 	// Array med alternativen
-	const alternatives = [randomCorrectStudent, students[1], students[2], students[3]];
+	const alternatives = randomStudents.slice(0, 4);
 
+	// Array med slumpade alternativ
 	const randomAlternatives = shuffleArray(alternatives);
 
+	// Generera fyra knappar med slumpade alternativ
 	randomAlternatives.forEach(alternative => {
-		document.querySelector('.row').innerHTML += `
-			<button class="button col-sm m-sm-3 btn-primary btn-lg">${alternative.name}</button>
-		`
+		if (alternative === correctStudent) {
+			buttonEl.innerHTML += `
+				<button id="correct" class="button col-5 btn-lg m-2 mw-100 btn-primary">${alternative.name}</button>
+			`;
+		} else {
+			buttonEl.innerHTML += `
+				<button class="button col-5 btn-lg m-2 mw-100 btn-primary">${alternative.name}</button>
+			`;
+		}
 	});
 
 	let clicks = document.querySelectorAll('.button')
-	clicks.forEach(click => {
-		click.addEventListener('click', gameplayFunction)
+	clicks.forEach((click, e) => {
+		click.addEventListener('click', correctOrNot)
 	});
-}
+};
 
-renderButtons();
+//		Rendera start-knapp
+const renderStartGameButton = () => {
+	startAndScoreEl.innerHTML = `
+		<button id="start" class="button btn btn-warning">Starta spelet!</button>
+	`;
+
+	document.querySelector('#start').addEventListener('click', e => { 
+		e.target.classList.add('d-none');
+		cardEl.classList.remove('d-none');
+		gameplayFunction(e);
+	});
+};
+
+//		Rättningsfunktion till varje guess/spelomgång
+const correctOrNot = (e) => {
+	if (e.target.innerText === correctStudent.name) {
+		correctGuesses++;
+		randomStudents.shift();
+	}
+	gameplayFunction();
+};
+
+//		funktion för en spelrunda
+const gameRound = () => {
+	//	Blanda om och välj ny correct student
+	shuffleArray(randomStudents);
+	correctStudent = randomStudents[0];
+	//	Generera ny bild
+	imageGenerator();
+	//	Knappelementet och generera nya alternativ
+	buttonEl.innerHTML = "";
+	renderButtons();
+};
+
+//		Slutskärm-funktion
+const endGame = () => {
+	// Göm gameplay-innehåll
+	buttonEl.classList.add('d-none');
+	cardEl.classList.add('d-none');
+	startAndScoreEl.classList.remove('d-none');
+
+	if (correctGuesses > highscore) {
+		highscore = correctGuesses;
+	}
+
+	//genera score och resetknapp
+	startAndScoreEl.innerHTML = "";
+	startAndScoreEl.innerHTML = `
+		<h2>Slut på spelet!</h2> 
+		<p>Du hade ${correctGuesses} av ${guesses} rätt. </p>
+		<p>Ditt nuvarande rekord är ${highscore} rätt. </p>
+		<button id="restart" class="button btn btn-warning">Spela igen!</button>
+	`;
+
+	// const restartButton = document.querySelector('#restart');
+	document.querySelector('#restart').addEventListener('click', e => { 
+		guesses = 0;
+		correctGuesses = 0;
+
+		randomStudents = shuffleArray(students);
+
+		startAndScoreEl.classList.add('d-none');
+		buttonEl.classList.remove('d-none');
+		cardEl.classList.remove('d-none');
+		gameplayFunction(e);
+	});
+};
+
+//		gameplayfunktion
+const gameplayFunction = (e) => {
+	if (guesses < 10) {
+		gameRound(e);
+		guesses++;
+	} else {
+		endGame(e);
+	}
+};
+
+renderStartGameButton();
+
+
+
+
+
+
+
+
+
+
+
+/*	Anteckningar
+
+- Gör klart själva spelfunktionen.
+	() gör så reset-knappen funkar
+	() fixa räknaren för rätt svar och antal omgångar
+	() Välj hur långt spelet ska vara.
+	(x) En "slutskärm" med antal rätt/fel svar.
+	(x) En spela-igenknapp.
+
+
+
+- förhindra repetion av bilder.
+
+*/
